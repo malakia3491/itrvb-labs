@@ -3,7 +3,6 @@
     "description": "itrvb-lab",
     "type": "project",
     "require": {
-        "fakerphp/faker": "^1.19"
     },
     "autoload": {
         "psr-4": {

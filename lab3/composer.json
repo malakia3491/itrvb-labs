@@ -1,0 +1,13 @@
+{
+    "name": "lab3/app",
+    "description": "itrvb-lab",
+    "type": "project",
+    "require": {
+        "fakerphp/faker": "^1.19"
+    },
+    "autoload": {
+        "psr-4": {
+            "Lab3\\": "src/"
+        }
+    }
+}

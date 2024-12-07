@@ -1,8 +1,8 @@
 <?php
 
-namespace Lab3\Repositories;
+namespace Lab3\IRepositories;
 
-use Lab3\Post;
+use Lab3\Post\Post;
 
 interface PostsRepositoryInterface {
     public function get(string $uuid): ?Post;

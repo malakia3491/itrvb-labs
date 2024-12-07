@@ -1,6 +1,6 @@
 <?php
 
-namespace Lab3\Comment;
+namespace Lab3;
 
 class Comment 
 {

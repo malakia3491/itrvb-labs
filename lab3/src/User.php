@@ -1,6 +1,6 @@
 <?php
 
-namespace Lab3\User;
+namespace Lab3;
 
 class User 
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Lab3\Article;
+namespace Lab3;
 
 class Article 
 {

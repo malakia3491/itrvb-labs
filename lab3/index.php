@@ -2,9 +2,10 @@
 
 require __DIR__ . '/vendor/autoload.php';
 
-use Lab3\User\User;
-use Lab3\Article\Article;
-use Lab3\Comment\Comment;
+use Lab3\User;
+use Lab3\Article;
+use Lab3\Comment;
+
 use Faker\Factory;
 
 $faker = Factory::create();

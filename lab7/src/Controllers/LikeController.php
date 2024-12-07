@@ -55,6 +55,13 @@ class LikeController {
                 return json_encode(['error' => 'User or likeable object not found.']);
             }
 
+            $likes = $this->likesRepository->getByLikeableUuidAndUserUuid($data['likeable_uuid'], $data['user_uuid'], $data['likeable_type']);
+
+            if (count($likes) != 0) {
+                http_response_code(406);
+                return json_encode(['error' => 'User has like it already.']);
+            }
+
             // Создание комментария
             $like = new Like(
                 Uuid::uuid4()->toString(),
@@ -97,7 +104,7 @@ class LikeController {
             if (!$likeable_obj) {
                 http_response_code(404);
                 return json_encode(['error' => 'Likeable object not found.']);
-            }
+            }       
 
             $data_likes = $this->likesRepository->getByLikeableUuid($uuid, $type);
 

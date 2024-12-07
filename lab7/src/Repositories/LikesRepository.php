@@ -37,4 +37,12 @@ class LikesRepository implements LikesRepositoryInterface
         $stmt->execute([$likeableUuid, $likeableType]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function getByLikeableUuidAndUserUuid(string $likeableUuid, string $userUuid, string $likeableType): array
+    {
+        $query = "SELECT * FROM likes WHERE likeable_uuid = ? AND likeable_type = ? AND user_Uuid = ?";
+        $stmt = $this->connection->prepare($query);
+        $stmt->execute([$likeableUuid, $likeableType, $userUuid,]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

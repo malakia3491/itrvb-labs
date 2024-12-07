@@ -13,4 +13,6 @@ interface LikesRepositoryInterface
     public function save(Like $like): void;
 
     public function getByLikeableUuid(string $likeableUuid, string $likeableType): array;
+
+    public function getByLikeableUuidAndUserUuid(string $likeableUuid, string $userUuid, string $likeableType): array;
 }

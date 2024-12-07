@@ -16,6 +16,7 @@
         "phpunit/phpunit": "^11.4"
     },
     "require": {
-        "ramsey/uuid": "^4.7"
+        "ramsey/uuid": "^4.7",
+        "fakerphp/faker": "*"
     }
 }

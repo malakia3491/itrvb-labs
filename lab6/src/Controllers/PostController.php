@@ -60,7 +60,7 @@ class PostController {
             return json_encode(['success' => 'Comment added successfully.']);
         } catch (\Exception $e) {
             http_response_code(500);
-            return json_encode(['error' => 'An error occurred.']);
+            return json_encode(['error' => $e->getMessage()]);
         }
     }
 
@@ -83,7 +83,7 @@ class PostController {
             return json_encode(['success' => 'Post deleted successfully.']);
         } catch (\Exception $e) {
             http_response_code(500);
-            return json_encode(['error' => 'An error occurred.']);
+            return json_encode(['error' => $e->getMessage()]);
         }
     }
 }

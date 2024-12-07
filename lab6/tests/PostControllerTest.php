@@ -7,6 +7,10 @@ use Lab3\IRepositories\CommentsRepositoryInterface;
 use Lab3\IRepositories\PostsRepositoryInterface;
 use Lab3\IRepositories\UsersRepositoryInterface;
 use PHPUnit\Framework\TestCase;
+
+use Lab3\Domain\User\User;
+use Lab3\Domain\Post\Post;
+
 use Ramsey\Uuid\Uuid;
 
 class PostControllerTest extends TestCase {
@@ -28,14 +32,20 @@ class PostControllerTest extends TestCase {
     }
 
     public function testReturnsSuccessResponse(): void {
+        $authorUuid =  Uuid::uuid4()->toString();
+        $postUuid = Uuid::uuid4()->toString();
         $data = [
-            'author_uuid' => Uuid::uuid4()->toString(),
-            'post_uuid' => Uuid::uuid4()->toString(),
+            'author_uuid' => $authorUuid ,
+            'post_uuid' => $postUuid,
             'text' => 'Test comment',
         ];
 
-        $this->usersRepository->method('get')->willReturn(true);
-        $this->postsRepository->method('get')->willReturn(true);
+        $this->usersRepository->method('get')->willReturn(
+            new User($authorUuid, 'username', 'John', 'Doe')
+        );
+        $this->postsRepository->method('get')->willReturn(
+            new Post($postUuid, $authorUuid, 'Test Title', 'Test Content')
+        );
 
         $response = $this->controller->addComment($data);
 
@@ -55,14 +65,20 @@ class PostControllerTest extends TestCase {
     }
 
     public function testReturnsErrorWhenUserNotFound(): void {
+
+        $authorUuid = Uuid::uuid4()->toString();
+        $postUuid = Uuid::uuid4()->toString();
+
         $data = [
-            'author_uuid' => Uuid::uuid4()->toString(),
-            'post_uuid' => Uuid::uuid4()->toString(),
+            'author_uuid' =>$authorUuid,
+            'post_uuid' =>  $postUuid,
             'text' => 'Test comment',
         ];
 
         $this->usersRepository->method('get')->willReturn(null);
-        $this->postsRepository->method('get')->willReturn(true);
+        $this->postsRepository->method('get')->willReturn(
+            new Post($postUuid, $authorUuid, 'Test Title', 'Test Content')
+        );
 
         $response = $this->controller->addComment($data);
 

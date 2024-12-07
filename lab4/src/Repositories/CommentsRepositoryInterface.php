@@ -2,7 +2,7 @@
 
 namespace Lab3\Repositories;
 
-use Lab3\Comment;
+use Lab3\Comment\Comment;
 
 interface CommentsRepositoryInterface {
     public function get(string $uuid): ?Comment;

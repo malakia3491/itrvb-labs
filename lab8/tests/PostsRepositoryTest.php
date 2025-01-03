@@ -1,6 +1,9 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
+use Monolog\Logger;
+use Monolog\Handler\TestHandler;
+
 use Lab3\IRepositories\PostsRepositoryInterface;
 use Lab3\Repositories\PostsRepository;
 use Lab3\Exceptions\PostNotFoundException;
@@ -17,8 +20,9 @@ class PostsRepositoryTest extends TestCase {
             title TEXT,
             text TEXT
         )");
-        
-        $this->repository = new PostsRepository($pdo);
+        $testHandler = new TestHandler();
+        $logger = new Logger('test', [$testHandler]);
+        $this->repository = new PostsRepository($pdo, $logger);
     }
 
     public function testPostIsSavedToRepository(): void {

@@ -17,6 +17,8 @@
     },
     "require": {
         "ramsey/uuid": "^4.7",
-        "fakerphp/faker": "*"
+        "fakerphp/faker": "*",
+        "psr/log": "^3.0",
+        "monolog/monolog": "^3.8"
     }
 }

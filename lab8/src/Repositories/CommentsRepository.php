@@ -5,13 +5,16 @@ namespace Lab3\Repositories;
 use Lab3\Domain\Comment\Comment;
 use Lab3\Exceptions\CommentNotFoundException;
 use Lab3\IRepositories\CommentsRepositoryInterface;
+use Psr\Log\LoggerInterface;
 use PDO;
 
 class CommentsRepository implements CommentsRepositoryInterface {
     private PDO $connection;
+    private LoggerInterface $logger;
 
-    public function __construct(PDO $connection) {
+    public function __construct(PDO $connection, LoggerInterface $logger) {
         $this->connection = $connection;
+        $this->logger = $logger;
     }
 
     public function get(string $uuid): ?Comment {
@@ -22,6 +25,7 @@ class CommentsRepository implements CommentsRepositoryInterface {
 
         $data = $stmt->fetch(PDO::FETCH_ASSOC);
         if (!$data) {
+            $this->logger->warning('Комментарий с UUID  не найден: ' . $uuid);
             throw new CommentNotFoundException("Comment with UUID {$uuid} not found");
         }
 
@@ -41,9 +45,14 @@ class CommentsRepository implements CommentsRepositoryInterface {
         $stmt->bindParam(':author_uuid', $comment->getAuthorUuid());
         $stmt->bindParam(':text', $comment->getText());
         $stmt->execute();
+        $this->logger->info('Сохранен пост с UUID: ' . $comment->getUuid());
     }
 
     public function delete(string $uuid): void {
+        $comment = $this->get($uuid);
+        if (!$comment) {
+            $this->logger->warning('Комментарий с UUID не найден для удаления: '. $uuid);
+        }
         $statement = $this->connection->prepare('DELETE FROM comments WHERE uuid = :uuid');
         $statement->execute(['uuid' => $uuid]);
     }

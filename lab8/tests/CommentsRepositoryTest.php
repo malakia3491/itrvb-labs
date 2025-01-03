@@ -1,6 +1,9 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
+use Monolog\Logger;
+use Monolog\Handler\TestHandler;
+
 use Lab3\IRepositories\CommentsRepositoryInterface;
 use Lab3\Repositories\CommentsRepository;
 use Lab3\Exceptions\CommentNotFoundException;
@@ -18,8 +21,9 @@ class CommentsRepositoryTest extends TestCase {
             author_uuid TEXT,
             text TEXT
         )");
-        
-        $this->repository = new CommentsRepository($pdo);
+        $testHandler = new TestHandler();
+        $logger = new Logger('test', [$testHandler]);
+        $this->repository = new CommentsRepository($pdo, $logger);
     }
 
     public function testCommentIsSavedToRepository(): void {

@@ -5,13 +5,16 @@ namespace Lab3\Repositories;
 use Lab3\Domain\Post\Post;
 use Lab3\Exceptions\PostNotFoundException;
 use Lab3\IRepositories\PostsRepositoryInterface;
+use Psr\Log\LoggerInterface;
 use PDO;    
 
 class PostsRepository implements PostsRepositoryInterface {
     private PDO $connection;
+    private LoggerInterface $logger;
 
-    public function __construct(PDO $connection) {
+    public function __construct(PDO $connection, LoggerInterface $logger) {
         $this->connection = $connection;
+        $this->logger = $logger;
     }
 
     public function get(string $uuid): ?Post {
@@ -22,6 +25,7 @@ class PostsRepository implements PostsRepositoryInterface {
 
         $data = $stmt->fetch(PDO::FETCH_ASSOC);
         if (!$data) {
+            $this->logger->warning('Пост с UUID не найден: ' . $uuid);
             throw new PostNotFoundException("Post with UUID {$uuid} not found");
         }
 
@@ -41,9 +45,14 @@ class PostsRepository implements PostsRepositoryInterface {
         $stmt->bindParam(':title', $post->getTitle());
         $stmt->bindParam(':text', $post->getText());
         $stmt->execute();
+        $this->logger->info('Сохранен пост с UUID: ' . $post->getUuid());
     }
 
     public function delete(string $uuid): void {
+        $post = $this->get($uuid);
+        if (!$post) {
+            $this->logger->warning('Пост с UUID не найден для удаления: '. $uuid);
+        }
         $statement = $this->connection->prepare('DELETE FROM posts WHERE uuid = :uuid');
         $statement->execute(['uuid' => $uuid]);
     }

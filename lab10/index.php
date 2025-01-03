@@ -5,7 +5,8 @@ use Monolog\Handler\StreamHandler;
 use Lab3\Controllers\PostController;
 use Lab3\Controllers\LikeController;
 use Lab3\Controllers\AuthController;
-// require './src/Scripts/FillDb.php';
+
+require './src/Scripts/FillDb.php';
 require_once  'vendor/autoload.php';
 
 $jwtSecret = 'your_secret_key';
@@ -33,8 +34,16 @@ function sendJsonResponse($data, $statusCode = 200) {
 }
 
 switch (true) {
+
+    case $requestMethod === 'POST' && $path === '/lab10/seeddb':
+        $data = json_decode(file_get_contents('php://input'), true);
+        $usersNumber = $data['usersNumber'];
+        $postsNumber = $data['postsNumber'];
+        seedDatabase($pdo, $usersNumber, $postsNumber);
+        break;
+
     // Маршрут для входа
-    case $requestMethod === 'POST' && $path === '/lab9/login':
+    case $requestMethod === 'POST' && $path === '/lab10/login':
         $data = json_decode(file_get_contents('php://input'), true);
         $username = $data['username'] ?? '';
         $password = $data['password'] ?? '';
@@ -47,7 +56,7 @@ switch (true) {
         break;
 
     // Маршрут для выхода
-    case $requestMethod === 'POST' && $path === '/lab9/logout':
+    case $requestMethod === 'POST' && $path === '/lab10/logout':
         $token = $authController->getTokenFromRequest();
         if ($token) {
             $authController->logout($token);
@@ -58,21 +67,21 @@ switch (true) {
         break;
 
     // Получение лайков для поста
-    case $requestMethod === 'GET' && preg_match('/^\/lab9\/posts\/likes$/', $path):
+    case $requestMethod === 'GET' && preg_match('/^\/lab10\/posts\/likes$/', $path):
         $uuid = $_GET['uuid'] ?? '';
         $type = "post";
         echo $likeController->getByLikeableUuid($uuid, $type);
         break;
 
     // Получение лайков для комментария
-    case $requestMethod === 'GET' && preg_match('/^\/lab9\/comments\/likes$/', $path):
+    case $requestMethod === 'GET' && preg_match('/^\/lab10\/comments\/likes$/', $path):
         $uuid = $_GET['uuid'] ?? '';
         $type = "comment";
         echo $likeController->getByLikeableUuid($uuid, $type);
         break;
 
     // Добавление лайка
-    case $requestMethod === 'POST' && $path === '/lab9/addlike':
+    case $requestMethod === 'POST' && $path === '/lab10/addlike':
         $userUuid = $authController->authenticate();
         if ($userUuid) {
             $data = json_decode(file_get_contents('php://input'), true);
@@ -84,7 +93,7 @@ switch (true) {
         break;
 
     // Добавление комментария
-    case $requestMethod === 'POST' && $path === '/lab9/posts/comment':
+    case $requestMethod === 'POST' && $path === '/lab10/posts/comment':
         $userUuid = $authController->authenticate();
         if ($userUuid) {
             $data = json_decode(file_get_contents('php://input'), true);
@@ -96,7 +105,7 @@ switch (true) {
         break;
 
     // Удаление поста
-    case $requestMethod === 'DELETE' && preg_match('/^\/lab9\/posts\?uuid=/', $path):
+    case $requestMethod === 'DELETE' && preg_match('/^\/lab10\/posts\?uuid=/', $path):
         $userUuid = $authController->authenticate();
         if ($userUuid) {
             $uuid = $_GET['uuid'] ?? '';

@@ -32,3 +32,10 @@ CREATE TABLE likes (
     user_uuid TEXT NOT NULL,
     likeable_type TEXT NOT NULL CHECK (likeable_type IN ('post', 'comment'))
 );
+
+CREATE TABLE tokens (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_uuid TEXT NOT NULL,
+    token TEXT NOT NULL,
+    expires_at DATETIME NOT NULL
+);

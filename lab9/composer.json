@@ -19,6 +19,7 @@
         "ramsey/uuid": "^4.7",
         "fakerphp/faker": "*",
         "psr/log": "^3.0",
-        "monolog/monolog": "^3.8"
+        "monolog/monolog": "^3.8",
+        "firebase/php-jwt": "^6.10"
     }
 }

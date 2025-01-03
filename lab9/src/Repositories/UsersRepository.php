@@ -17,6 +17,24 @@ class UsersRepository implements UsersRepositoryInterface {
         $this->logger = $logger;
     }
 
+    public function findByUsername($username): ?user {
+        $statement = $this->connection->prepare('SELECT * FROM users WHERE username = :username');
+        $statement->execute(['username' => $username]);
+        $result = $statement->fetch();
+
+        if (!$result) {
+            $this->logger->warning('Пользователь с username не найден: ' . $username);
+            return null;
+        }
+
+        return new User(
+            $result['uuid'],
+            $result['username'],
+            $result['first_name'],
+            $result['last_name']
+        );
+    }
+
     public function get(string $uuid): ?User {
         $statement = $this->connection->prepare('SELECT * FROM users WHERE uuid = :uuid');
         $statement->execute(['uuid' => $uuid]);
@@ -56,5 +74,32 @@ class UsersRepository implements UsersRepositoryInterface {
         }
         $statement = $this->connection->prepare('DELETE FROM users WHERE uuid = :uuid');
         $statement->execute(['uuid' => $uuid]);
+    }
+
+    public function saveToken(string $userUuid, string $token, int $expiresAt): void
+    {
+        $statement = $this->connection->prepare(
+            'INSERT INTO tokens (user_uuid, token, expires_at) VALUES (:user_uuid, :token, :expires_at)'
+        );
+        $statement->execute([
+            'user_uuid' => $userUuid,
+            'token' => $token,
+            'expires_at' => date('Y-m-d H:i:s', $expiresAt),
+        ]);
+    }
+
+    public function invalidateToken(string $token): void
+    {
+        $statement = $this->connection->prepare('DELETE FROM tokens WHERE token = :token');
+        $statement->execute(['token' => $token]);
+        $this->logger->info('Токен инвалидирован');
+    }
+
+    public function getToken($token): array|false
+    {
+        $statement = $this->connection->prepare('SELECT * FROM tokens WHERE token = :token');
+        $statement->execute(['token' => $token]);
+        $result = $statement->fetch();
+        return $result;
     }
 }
